@@ -1,0 +1,18 @@
+.sidebar {
+  border-right: 1px solid #eee;
+  background-color: #fafafa;
+  font-family: system-ui, sans-serif;
+}
+
+.input-group-text {
+  background-color: #fff !important;
+}
+
+.form-control:focus {
+  box-shadow: none;
+}
+
+input::placeholder {
+  color: #999;
+  font-size: 0.9rem;
+}

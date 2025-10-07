@@ -1,0 +1,6 @@
+.venv/
+.DS_Store
+.idea/
+*.pdf
+frontend/node_modules/
+frontend/dist/
