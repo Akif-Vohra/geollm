@@ -1,6 +1,6 @@
 # GeoLLM 
 
-I like looking up Geography/History/Maps. I created this app to ask questions 
+I like looking up Geography/History/Maps. I created this app for myself to ask questions 
 to LLM and generate a map in return. Frontend and Backend are separate so 
 just calling an API endpoint should also work. Right now it is quite basic. 
 You ask a question and it generates a interactive point map. However, I think
@@ -27,7 +27,7 @@ remain minimal and not very complex. With alpine.js I get the required DOM
 bindings and reactive states without a lot of overhead. If I think of more
 features in the future, maybe I would consider React?
 
-Following should be enable to get the frontend running.
+Following should be enough to get the frontend running.
 
     npm install
     npm run dev
