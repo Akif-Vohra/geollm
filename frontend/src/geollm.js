@@ -78,7 +78,7 @@ export default function geoLLM() {
 
     async runViaBackend() {
       try {
-        const endpoint = `http://127.0.0.1:8000/api/run_query?query=${encodeURIComponent(query)}`
+        const endpoint = `http://127.0.0.1:8000/api/run_query?query=${encodeURIComponent(this.query)}`
         const res = await fetch(endpoint, {
           method: 'GET',
           headers: {
@@ -111,7 +111,8 @@ export default function geoLLM() {
 
       // Ask model for plain JSON list of places
       const prompt = `
-        Find modern geographic location names for the locations which can answer user's query.
+        Find modern geographic location names (cities, states, district, village etc)
+        for the locations which can answer user's query.
         Return ONLY JSON with this exact shape:
         {"places":[{"name":"","year":"","context":""}]}
         

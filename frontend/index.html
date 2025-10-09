@@ -7,6 +7,13 @@
     <title>GeoLLM App</title>
   </head>
   <body>
+    <a href="https://github.com/Akif-Vohra/geollm"
+       target="_blank"
+       rel="noopener"
+       class="position-fixed bottom-0 end-0 m-4 text-dark"
+       title="View on GitHub">
+      <i class="bi bi-github fs-2 bg-white rounded-circle shadow p-2"></i>
+    </a>
     <div class="container-fluid" x-data="geoLLM()">
       <div class="row">
         <div class="col-md-9 p-0">
@@ -16,20 +23,6 @@
         <div class="col-md-3 border-start bg-light">
           <div class="p-3">
             <div class="mb-4">
-              <label class="form-label fw-semibold small text-secondary mb-2" for="api_key">
-                API Key / Mode
-              </label>
-
-              <!-- API key input -->
-              <input
-                id="api_key"
-                type="password"
-                class="form-control form-control-sm mb-2"
-                placeholder="Enter your OpenAI API key"
-                x-model="apiKey"
-                @change="saveApiKey()"
-              />
-
               <!-- Mode toggle -->
               <div class="form-check form-switch d-flex align-items-center">
                 <input
@@ -52,6 +45,21 @@
                          OpenAI API directly from the browser"
                 ></i>
               </div>
+
+              <label class="form-label fw-semibold small text-secondary mb-2 mt-2" for="api_key" x-show="!useBackend">
+                OpenAPI Key (This is never sent to backend or DB)
+              </label>
+
+              <!-- API key input -->
+              <input
+                id="api_key"
+                type="password"
+                class="form-control form-control-sm mb-2"
+                placeholder="Enter your OpenAI API key"
+                x-model="apiKey"
+                x-show="!useBackend"
+                @change="saveApiKey()"
+              />
             </div>
 
 
