@@ -1,11 +1,13 @@
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { toPng } from 'html-to-image'
 
 export default function geoLLM() {
   return {
     map: null,
     layerGroup: null,
     query: '',
+    graphType: 'interactive_point',
     loading: false,
     apiKey: localStorage.getItem('openai_api_key') || 'TEST',
     useBackend: false,
@@ -40,9 +42,7 @@ export default function geoLLM() {
       this.clearMap()
       this.loading = true
       try {
-        const points = this.useBackend
-          ? await this.runViaBackend(this.query)
-          : await this.runViaOpenAI(this.query)
+        const points = this.useBackend ? await this.runViaBackend() : await this.runViaOpenAI()
 
         if (!points?.length) {
           this.layerGroup.clearLayers()
@@ -76,12 +76,37 @@ export default function geoLLM() {
       }
     },
 
-    async runViaBackend(query) {
-      alert('This function is not yet implemented')
-      return []
+    async runViaBackend() {
+      try {
+        const endpoint = `http://127.0.0.1:8000/api/run_query?query=${encodeURIComponent(query)}`
+        const res = await fetch(endpoint, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+          },
+        })
+
+        if (!res.ok) {
+          console.error('Backend request failed:', res.status, res.statusText)
+          throw new Error(`Backend error ${res.status}`)
+        }
+
+        const data = await res.json()
+
+        // Expect backend to return: { places: [{ name, lat, lng, year, context }] }
+        if (!data || !Array.isArray(data.places)) {
+          console.warn('Unexpected backend response:', data)
+          return []
+        }
+
+        return data.places
+      } catch (error) {
+        console.error('Error in runViaBackend:', error)
+        return []
+      }
     },
 
-    async runViaOpenAI(query) {
+    async runViaOpenAI() {
       if (!this.apiKey) throw new Error('OpenAI API key missing.')
 
       // Ask model for plain JSON list of places
@@ -90,7 +115,7 @@ export default function geoLLM() {
         Return ONLY JSON with this exact shape:
         {"places":[{"name":"","year":"","context":""}]}
         
-        Query: ${query}
+        Query: ${this.query}
             `.trim()
 
       const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -100,7 +125,7 @@ export default function geoLLM() {
           Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini',
+          model: 'gpt-4.1-2025-04-14',
           temperature: 0,
           messages: [{ role: 'user', content: prompt }],
         }),
@@ -157,6 +182,29 @@ export default function geoLLM() {
 
     sleep(ms) {
       return new Promise((r) => setTimeout(r, ms))
+    },
+
+    async exportImage() {
+      const el = document.getElementById('map')
+      if (!el) return
+
+      // optional: temporarily hide Leaflet controls/attribution
+      const controls = el.querySelector('.leaflet-control-container')
+      if (controls) controls.style.opacity = '0'
+
+      try {
+        const dataUrl = await toPng(el, {
+          cacheBust: true,
+          pixelRatio: 2, // higher-res export
+          backgroundColor: '#ffffff',
+        })
+        const a = document.createElement('a')
+        a.href = dataUrl
+        a.download = `geollm-map-${Date.now()}.png`
+        a.click()
+      } finally {
+        if (controls) controls.style.opacity = ''
+      }
     },
   }
 }
