@@ -48,6 +48,8 @@ export default function geoLLM() {
           this.layerGroup.clearLayers()
           return
         }
+        // ✅ Update title to reflect current query
+        document.getElementById('map-title').innerText = `${this.query}`
         this.plotPoints(points)
       } catch (error) {
         console.error(error)
@@ -186,7 +188,7 @@ export default function geoLLM() {
     },
 
     async exportImage() {
-      const el = document.getElementById('map')
+      const el = document.getElementById('map-container')
       if (!el) return
 
       // optional: temporarily hide Leaflet controls/attribution

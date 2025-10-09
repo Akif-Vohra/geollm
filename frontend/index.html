@@ -17,7 +17,10 @@
     <div class="container-fluid" x-data="geoLLM()">
       <div class="row">
         <div class="col-md-9 p-0">
-          <div id="map" aria-label="Map" style="height: 100vh"></div>
+          <div id="map-container" style="position: relative;">
+            <div id="map-title"></div>
+            <div id="map" aria-label="Map" style="height: 100vh;"></div>
+          </div>
         </div>
 
         <div class="col-md-3 border-start bg-light">
