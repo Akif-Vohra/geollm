@@ -1,0 +1,11 @@
+# bandit.yaml
+# Only scan backend code, skip test & frontend noise
+exclude_dirs:
+  - .venv
+  - frontend
+  - node_modules
+  - tests
+
+# Fail on medium+ severity and high confidence
+severity: MEDIUM
+confidence: HIGH

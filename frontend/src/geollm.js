@@ -38,6 +38,11 @@ export default function geoLLM() {
       this.layerGroup = L.layerGroup().addTo(this.map)
     },
 
+    resetMapTitle(title) {
+      title = title || ''
+      document.getElementById('map-title').innerText = `${title}`
+    },
+
     async run() {
       this.clearMap()
       this.loading = true
@@ -48,9 +53,8 @@ export default function geoLLM() {
           this.layerGroup.clearLayers()
           return
         }
-        // ✅ Update title to reflect current query
-        document.getElementById('map-title').innerText = `${this.query}`
         this.plotPoints(points)
+        this.resetMapTitle(this.query)
       } catch (error) {
         console.error(error)
       } finally {
@@ -60,6 +64,7 @@ export default function geoLLM() {
 
     clearMap() {
       this.layerGroup.clearLayers()
+      this.resetMapTitle()
     },
 
     plotPoints(points) {
@@ -116,7 +121,7 @@ export default function geoLLM() {
         Find modern geographic location names (cities, states, district, village etc)
         for the locations which can answer user's query.
         Return ONLY JSON with this exact shape:
-        {"places":[{"name":"","year":"","context":""}]}
+        {"places":[{"name":"","context":""}]}
         
         Query: ${this.query}
             `.trim()
