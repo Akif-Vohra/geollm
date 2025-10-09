@@ -1,3 +1,4 @@
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { toPng } from 'html-to-image'
@@ -10,7 +11,8 @@ export default function geoLLM() {
     graphType: 'interactive_point',
     loading: false,
     apiKey: localStorage.getItem('openai_api_key') || 'TEST',
-    useBackend: false,
+    useBackend: true,
+    model: 'gpt-4o',
 
     saveApiKey() {
       localStorage.setItem('openai_api_key', this.apiKey)
@@ -85,7 +87,7 @@ export default function geoLLM() {
 
     async runViaBackend() {
       try {
-        const endpoint = `http://127.0.0.1:8000/api/run_query?query=${encodeURIComponent(this.query)}`
+        const endpoint = `${BACKEND_URL}/api/generate_geo_data?query=${encodeURIComponent(this.query)}&model_name=${this.model}`
         const res = await fetch(endpoint, {
           method: 'GET',
           headers: {
@@ -98,9 +100,8 @@ export default function geoLLM() {
           throw new Error(`Backend error ${res.status}`)
         }
 
-        const data = await res.json()
+        const data = (await res.json()).data
 
-        // Expect backend to return: { places: [{ name, lat, lng, year, context }] }
         if (!data || !Array.isArray(data.places)) {
           console.warn('Unexpected backend response:', data)
           return []

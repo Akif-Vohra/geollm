@@ -65,12 +65,24 @@
               />
             </div>
 
+            <label class="form-label fw-semibold small text-secondary mb-2" for="model">
+              Model
+            </label>
+
+            <div class="input-group shadow-sm rounded-3 overflow-hidden">
+              <select id="model" class="form-control form-select border-0" x-model="model">
+                <option value="qwen3">Qwen 3 (local LLM)</option>
+                <option value="gpt-4o-mini">GPT-4o-mini (cloud)</option>
+                <option value="gpt-4o">GPT-4o (cloud)</option>
+              </select>
+            </div>
+
             <label class="form-label fw-semibold small text-secondary mb-2" for="graphType">
               Type of graph
             </label>
 
             <div class="input-group shadow-sm rounded-3 overflow-hidden">
-              <select id="graphType" class="form-control form-select border-0" aria-label="Search" x-model="graphType">
+              <select id="graphType" class="form-control form-select border-0" x-model="graphType">
                 <option value="interactive_point">Interactive point Map</option>
                 <option value="flow_route">Flow/route Map</option>
                 <option value="timeline">Timeline Map</option>
