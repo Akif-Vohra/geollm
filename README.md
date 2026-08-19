@@ -14,10 +14,14 @@ i would like to extend to add following types of maps in future. e.g
 
 <img width="3432" height="1718" alt="image" src="https://github.com/user-attachments/assets/3cd602ac-fbe8-4d12-80eb-b34f41d16448" />
 
-I plan to implement two modes.
+The frontend calls the backend, which runs a local model through Ollama to
+generate the map data — one path, fully local. (An earlier version could also
+call OpenAI directly from the browser with your own key; that mode has been
+removed.)
 
-- Direct calls to OpenAPI via User's own API key in JS
-- Backend mode supported by locally run model. Qwen/Gemma? (I am not sure how good these would be to generate data)
+Next I want to try a factual mode that pulls structured data from a source
+like Wikidata instead of relying on the model alone, so places and
+coordinates are grounded rather than generated.
 
 # Frontend
 
