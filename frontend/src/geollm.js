@@ -10,13 +10,7 @@ export default function geoLLM() {
     query: '',
     graphType: 'interactive_point',
     loading: false,
-    apiKey: localStorage.getItem('openai_api_key') || 'TEST',
-    useBackend: true,
-    model: 'gpt-4o',
-
-    saveApiKey() {
-      localStorage.setItem('openai_api_key', this.apiKey)
-    },
+    model: 'qwen3:8b',
 
     init() {
       this.map = L.map('map', { zoomControl: true }).setView([20, 0], 2)
@@ -57,7 +51,7 @@ export default function geoLLM() {
       this.clearMap()
       this.loading = true
       try {
-        const points = this.useBackend ? await this.runViaBackend() : await this.runViaOpenAI()
+        const points = await this.runViaBackend()
 
         if (!points?.length) {
           this.layerGroup.clearLayers()
@@ -120,85 +114,6 @@ export default function geoLLM() {
         console.error('Error in runViaBackend:', error)
         return []
       }
-    },
-
-    async runViaOpenAI() {
-      if (!this.apiKey) throw new Error('OpenAI API key missing.')
-
-      // Ask model for plain JSON list of places
-      const prompt = `
-        Find modern geographic location names (cities, states, district, village etc)
-        for the locations which can answer user's query.
-        Return ONLY JSON with this exact shape:
-        {"places":[{"name":"","context":""}]}
-        
-        Query: ${this.query}
-            `.trim()
-
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: 'gpt-4.1-2025-04-14',
-          temperature: 0,
-          messages: [{ role: 'user', content: prompt }],
-        }),
-      })
-      if (!res.ok) throw new Error(`OpenAI error: `)
-      const data = await res.json()
-      const content = data?.choices?.[0]?.message?.content || '{}'
-
-      // Parse JSON from model output (be defensive)
-      let places = []
-      try {
-        const parsed = JSON.parse(content)
-        places = parsed?.places || []
-      } catch {
-        // If model responded with text, try to salvage JSON block
-        const match = content.match(/\{[\s\S]*}/)
-        if (match) {
-          const parsed = JSON.parse(match[0])
-          places = parsed?.places || []
-        }
-      }
-
-      // Client-side geocode names → lat/lng
-      const out = []
-      for (const p of places.slice(0, 15)) {
-        // keep it polite to the geocoder
-        const coords = await this.geocodeName(p.name)
-        if (coords) {
-          out.push({
-            name: p.name,
-            lat: coords.lat,
-            lng: coords.lng,
-            year: p.year,
-            context: p.context,
-          })
-          // small delay to be nice to Nominatim
-          await this.sleep(300)
-        }
-      }
-      return out
-    },
-
-    async geocodeName(name) {
-      // Nominatim public endpoint (note: rate limits & usage policy apply)
-      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(name)}`
-      const res = await fetch(url, {
-        headers: { Accept: 'application/json' },
-      })
-      if (!res.ok) return null
-      const arr = await res.json()
-      if (!arr?.length) return null
-      return { lat: parseFloat(arr[0].lat), lng: parseFloat(arr[0].lon) }
-    },
-
-    sleep(ms) {
-      return new Promise((r) => setTimeout(r, ms))
     },
 
     async exportImage() {

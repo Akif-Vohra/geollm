@@ -35,46 +35,6 @@
               <div class="brandmark">Geo<span class="accent">LLM</span></div>
               <div class="brand-tag">Ask · map · explore</div>
             </div>
-            <div class="mb-4">
-              <!-- Mode toggle -->
-              <div class="form-check form-switch d-flex align-items-center">
-                <input
-                  class="form-check-input me-2"
-                  type="checkbox"
-                  id="use_backend"
-                  x-model="useBackend"
-                />
-                <label class="form-check-label small text-secondary mb-0" for="use_backend">
-                  Use backend (local LLM) instead of OpenAI API
-                </label>
-                <i
-                  class="bi bi-info-circle ms-2 text-muted"
-                  tabindex="0"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="top"
-                  title="This app can run in two modes.
-                         It can either use the backend API or
-                         you can use your own OpenAPI key to call
-                         OpenAI API directly from the browser"
-                ></i>
-              </div>
-
-              <label class="form-label fw-semibold small text-secondary mb-2 mt-2" for="api_key" x-show="!useBackend">
-                OpenAPI Key (This is never sent to backend or DB)
-              </label>
-
-              <!-- API key input -->
-              <input
-                id="api_key"
-                type="password"
-                class="form-control form-control-sm mb-2"
-                placeholder="Enter your OpenAI API key"
-                x-model="apiKey"
-                x-show="!useBackend"
-                @change="saveApiKey()"
-              />
-            </div>
-
             <label class="form-label fw-semibold small text-secondary mb-2" for="model">
               Model
             </label>
@@ -82,8 +42,6 @@
             <div class="input-group shadow-sm rounded-3 overflow-hidden">
               <select id="model" class="form-control form-select border-0" x-model="model">
                 <option value="qwen3:8b">Qwen 3 (local LLM)</option>
-                <option value="gpt-4o-mini">GPT-4o-mini (cloud)</option>
-                <option value="gpt-4o">GPT-4o (cloud)</option>
               </select>
             </div>
 

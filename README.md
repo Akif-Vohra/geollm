@@ -46,6 +46,5 @@ FastAPI, with dependencies managed by uv.
 
 Interactive API docs are at http://127.0.0.1:8000/docs
 
-Cloud models (`gpt-4o`, `gpt-4o-mini`, ...) need `OPENAI_API_KEY` set in
-the environment. Any other model name is handed straight to Ollama, so
-pass the full tag exactly as `ollama list` prints it, e.g. `qwen3:8b`.
+The model name is handed straight to Ollama, so pass the full tag exactly
+as `ollama list` prints it, e.g. `qwen3:8b`.
