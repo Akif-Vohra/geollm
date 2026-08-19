@@ -1,9 +1,13 @@
+import os
 from enum import Enum
 
 from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
 
 from .models import InteractivePointSchema
+
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 
 class GeoDataType(str, Enum):
@@ -27,12 +31,22 @@ class GeoLLMClient:
 
     def __init__(self, model_name: str, provider: str = "ollama"):
         """
-        LLM client wrapper. `model_name` is the model id for `provider`
-        (an Ollama tag today, e.g. "qwen3:8b"). Route new providers such as
-        "openai"/"anthropic" by adding a branch here.
+        LLM client wrapper. `model_name` is the model id for `provider`:
+        an Ollama tag (e.g. "qwen3:8b") for "ollama", or an OpenRouter model
+        slug (e.g. "openai/gpt-4o-mini") for "openrouter". Add a branch here
+        to support further providers.
         """
         if provider == "ollama":
             self.llm_model = ChatOllama(model=model_name)
+        elif provider == "openrouter":
+            api_key = os.getenv("OPENROUTER_API_KEY")
+            if not api_key:
+                raise ValueError("OPENROUTER_API_KEY is not set")
+            self.llm_model = ChatOpenAI(
+                model=model_name,
+                base_url=OPENROUTER_BASE_URL,
+                api_key=api_key,
+            )
         else:
             raise ValueError(f"Unsupported model provider: {provider!r}")
 

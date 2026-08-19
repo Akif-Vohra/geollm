@@ -53,8 +53,17 @@ Interactive API docs are at http://127.0.0.1:8000/docs
 
 The models shown in the UI come from `config.json`; the backend refuses to
 start if it's missing, so copy `config.example.json` as shown above and edit
-your copy. Each entry has an `id` (the Ollama tag exactly as `ollama list`
-prints it, e.g. `qwen3:8b`), a `label`, and a `provider` (`ollama` for now —
-this is the hook for adding cloud providers like OpenAI/Anthropic later). The
-list is served at `GET /api/models`, and the frontend builds its dropdown
-from it.
+your copy. Each entry has an `id`, a `label`, and a `provider`. The list is
+served at `GET /api/models`, and the frontend builds its dropdown from it.
+
+Providers:
+
+- `ollama` — `id` is the Ollama tag exactly as `ollama list` prints it, e.g.
+  `qwen3:8b`. Runs locally, no key.
+- `openrouter` — `id` is an OpenRouter model slug, e.g. `openai/gpt-4o-mini`.
+  Needs an API key: copy `backend/.env.example` to `backend/.env` and set
+  `OPENROUTER_API_KEY`. `backend/.env` is gitignored — never commit your key.
+
+Example `config.json` entry for an OpenRouter model:
+
+    { "id": "openai/gpt-4o-mini", "label": "GPT-4o mini (OpenRouter)", "provider": "openrouter" }

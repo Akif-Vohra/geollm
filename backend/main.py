@@ -1,5 +1,7 @@
 import logging
+import os
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -7,6 +9,8 @@ from config import AVAILABLE_MODELS, get_model
 from geo_llm_client.geo_llm_client import GeoDataType, GeoLLMClient
 from geo_llm_client.models import ApiEnvelope, Meta
 from utils import get_geo_coordinates
+
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 app = FastAPI(title="GeoLLM Backend", version="0.1")
 
@@ -58,8 +62,8 @@ def generate_geo_data(query: str = Query(...), model_name: str = Query(...)):
     if model is None:
         detail = f"Unknown model: {model_name}"
         raise HTTPException(status_code=400, detail=detail)
-    client = GeoLLMClient(model.id, provider=model.provider)
     try:
+        client = GeoLLMClient(model.id, provider=model.provider)
         result = client.generate_data(
             query=query,
             geo_data_type=GeoDataType.INTERACTIVE_POINT,
