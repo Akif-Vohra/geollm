@@ -21,6 +21,14 @@ export default function geoLLM() {
     init() {
       this.map = L.map('map', { zoomControl: true }).setView([20, 0], 2)
       const baseLayers = {
+        Terrain: L.tileLayer(
+          'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
+          {
+            maxNativeZoom: 13,
+            maxZoom: 19,
+            attribution: 'Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, DeLorme, and NPS',
+          },
+        ),
         Light: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
           attribution: '© OpenStreetMap, © CartoDB',
         }),
@@ -35,7 +43,7 @@ export default function geoLLM() {
           },
         ),
       }
-      baseLayers.Light.addTo(this.map) // default
+      baseLayers.Terrain.addTo(this.map) // default
       L.control.layers(baseLayers).addTo(this.map) // adds a theme switcher
       this.layerGroup = L.layerGroup().addTo(this.map)
     },

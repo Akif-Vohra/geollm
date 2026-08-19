@@ -1,0 +1,134 @@
+/* GeoLLM theme — design tokens + Bootstrap 5.3 bridge. Load after bootstrap. */
+
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #f4f9fe;
+  --line: #e6edf4;
+  --ink: #1c2733;
+  --muted: #5e6e7e;
+
+  --blue: #1667c6;
+  --blue-deep: #0f4e9c;
+  --blue-soft: #e7f1fc;
+  --accent: #439b63;
+
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-head: "Poppins", system-ui, sans-serif;
+
+  --radius: 16px;
+  --radius-sm: 12px;
+  --radius-pill: 50px;
+  --shadow: 0 10px 30px rgba(22, 71, 140, 0.08);
+  --shadow-hover: 0 18px 44px rgba(22, 71, 140, 0.14);
+
+  --bs-body-font-family: var(--font-head);
+  --bs-body-color: var(--ink);
+  --bs-body-bg: var(--bg);
+  --bs-border-color: var(--line);
+  --bs-border-radius: var(--radius-sm);
+  --bs-border-radius-sm: 10px;
+  --bs-border-radius-lg: var(--radius);
+  --bs-primary: #1667c6;
+  --bs-primary-rgb: 22, 103, 198;
+  --bs-secondary-color: var(--muted);
+  --bs-link-color: var(--blue);
+  --bs-link-hover-color: var(--blue-deep);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+:focus-visible {
+  outline: 3px solid var(--blue-soft);
+  outline-offset: 2px;
+}
+
+.btn {
+  --bs-btn-border-radius: var(--radius-pill);
+  font-family: var(--font-head);
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease,
+    border-color 0.15s ease, color 0.15s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn:disabled {
+  transform: none;
+}
+.btn-primary {
+  --bs-btn-bg: var(--blue);
+  --bs-btn-border-color: var(--blue);
+  --bs-btn-hover-bg: var(--blue-deep);
+  --bs-btn-hover-border-color: var(--blue-deep);
+  --bs-btn-active-bg: var(--blue-deep);
+  --bs-btn-active-border-color: var(--blue-deep);
+  box-shadow: var(--shadow);
+}
+.btn-primary:hover {
+  box-shadow: var(--shadow-hover);
+}
+.btn-outline-secondary {
+  --bs-btn-color: var(--ink);
+  --bs-btn-border-color: var(--line);
+  --bs-btn-bg: var(--surface);
+  --bs-btn-hover-bg: var(--surface);
+  --bs-btn-hover-color: var(--blue);
+  --bs-btn-hover-border-color: var(--blue);
+  --bs-btn-active-bg: var(--surface);
+  --bs-btn-active-color: var(--blue);
+  --bs-btn-active-border-color: var(--blue);
+  box-shadow: var(--shadow);
+}
+
+.sidebar {
+  background: var(--surface-soft);
+  border-color: var(--line) !important;
+}
+
+.brandmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--ink);
+  line-height: 1;
+}
+.brandmark .accent {
+  color: var(--accent);
+}
+.brand-tag {
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.35rem;
+}
+
+.form-label {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.form-control,
+.form-select {
+  border-color: var(--line);
+  color: var(--ink);
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 0.2rem var(--blue-soft);
+}
+input::placeholder,
+textarea::placeholder {
+  color: #9aa8b6;
+  font-size: 0.9rem;
+}
