@@ -25,13 +25,16 @@ class GeoLLMClient:
         GeoDataType.INTERACTIVE_POINT: InteractivePointSchema,
     }
 
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, provider: str = "ollama"):
         """
-        LLM client wrapper. `model_name` is an Ollama tag (e.g. "qwen3:8b");
-        Ollama owns the list of locally installed models, so we do not
-        duplicate it here.
+        LLM client wrapper. `model_name` is the model id for `provider`
+        (an Ollama tag today, e.g. "qwen3:8b"). Route new providers such as
+        "openai"/"anthropic" by adding a branch here.
         """
-        self.llm_model = ChatOllama(model=model_name)
+        if provider == "ollama":
+            self.llm_model = ChatOllama(model=model_name)
+        else:
+            raise ValueError(f"Unsupported model provider: {provider!r}")
 
     # ---- Helpers you (or subclasses) can override if needed ----
     def prompt_for(self, dtype: GeoDataType, query: str) -> str:

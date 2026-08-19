@@ -3,6 +3,7 @@ import logging
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
+from config import AVAILABLE_MODELS, get_model
 from geo_llm_client.geo_llm_client import GeoDataType, GeoLLMClient
 from geo_llm_client.models import ApiEnvelope, Meta
 from utils import get_geo_coordinates
@@ -30,14 +31,34 @@ app.add_middleware(
 )
 
 
+@app.get("/api/models")
+def list_models():
+    """List the models available to the frontend.
+
+    :return: the configured models as ``{id, label, provider}`` dicts
+    """
+    return [m.model_dump() for m in AVAILABLE_MODELS]
+
+
 @app.get("/api/generate_geo_data")
 def generate_geo_data(query: str = Query(...), model_name: str = Query(...)):
+    """Generate map data for a natural-language query.
+
+    :param query: the user's question
+    :param model_name: id of a model from ``GET /api/models``
+    :return: an :class:`ApiEnvelope` of geocoded places
+    :raises HTTPException: 400 if the model is unknown, 502 if the LLM fails
+    """
     logger.info(
         "Received query: %s with model name %s",
         query,
         model_name,
     )
-    client = GeoLLMClient(model_name)
+    model = get_model(model_name)
+    if model is None:
+        detail = f"Unknown model: {model_name}"
+        raise HTTPException(status_code=400, detail=detail)
+    client = GeoLLMClient(model.id, provider=model.provider)
     try:
         result = client.generate_data(
             query=query,

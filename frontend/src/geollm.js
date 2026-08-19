@@ -10,9 +10,24 @@ export default function geoLLM() {
     query: '',
     graphType: 'interactive_point',
     loading: false,
-    model: 'qwen3:8b',
+    models: [],
+    model: '',
+
+    async loadModels() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/models`)
+        if (!res.ok) throw new Error(`models request failed: ${res.status}`)
+        this.models = await res.json()
+        if (this.models.length && !this.models.some((m) => m.id === this.model)) {
+          this.model = this.models[0].id
+        }
+      } catch (error) {
+        console.error('Failed to load models:', error)
+      }
+    },
 
     init() {
+      this.loadModels()
       this.map = L.map('map', { zoomControl: true }).setView([20, 0], 2)
       const baseLayers = {
         Terrain: L.tileLayer(

@@ -46,9 +46,15 @@ Following should be enough to get the frontend running.
 FastAPI, with dependencies managed by uv.
 
     uv sync
+    cp backend/config.example.json backend/config.json
     uv run uvicorn --app-dir backend main:app --port 8000
 
 Interactive API docs are at http://127.0.0.1:8000/docs
 
-The model name is handed straight to Ollama, so pass the full tag exactly
-as `ollama list` prints it, e.g. `qwen3:8b`.
+The models shown in the UI come from `config.json`; the backend refuses to
+start if it's missing, so copy `config.example.json` as shown above and edit
+your copy. Each entry has an `id` (the Ollama tag exactly as `ollama list`
+prints it, e.g. `qwen3:8b`), a `label`, and a `provider` (`ollama` for now —
+this is the hook for adding cloud providers like OpenAI/Anthropic later). The
+list is served at `GET /api/models`, and the frontend builds its dropdown
+from it.
