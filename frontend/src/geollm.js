@@ -98,7 +98,7 @@ export default function geoLLM() {
         // fit bounds or center on first
         const latlngs = points.map((p) => [p.lat, p.lng])
         const bounds = L.latLngBounds(latlngs)
-        this.map.fitBounds(bounds, { padding: [24, 24], maxZoom: 6 })
+        this.map.fitBounds(bounds, { padding: [24, 24], maxZoom: 6, animate: false })
       }
     },
 
