@@ -29,11 +29,23 @@ features in the future, maybe I would consider React?
 
 Following should be enough to get the frontend running.
 
+    cd frontend
     npm install
+    cp .env.example .env
     npm run dev
 
-Frontend
+`.env` just points the frontend at the backend, and defaults to
+`http://127.0.0.1:8000`. Vite serves on http://localhost:5173
 
 # Backend
 
-Still to do. I am thinking of going with Flask. TBD.
+FastAPI, with dependencies managed by uv.
+
+    uv sync
+    uv run uvicorn --app-dir backend main:app --port 8000
+
+Interactive API docs are at http://127.0.0.1:8000/docs
+
+Cloud models (`gpt-4o`, `gpt-4o-mini`, ...) need `OPENAI_API_KEY` set in
+the environment. Any other model name is handed straight to Ollama, so
+pass the full tag exactly as `ollama list` prints it, e.g. `qwen3:8b`.

@@ -1,30 +1,13 @@
 import logging
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
-from geo_llm_client.exceptions import UnsupportedModelError
 from geo_llm_client.geo_llm_client import GeoDataType, GeoLLMClient
 from geo_llm_client.models import ApiEnvelope, Meta
 from utils import get_geo_coordinates
 
 app = FastAPI(title="GeoLLM Backend", version="0.1")
-
-
-@app.exception_handler(UnsupportedModelError)
-async def unsupported_model_handler(_, exc: UnsupportedModelError):
-    return JSONResponse(
-        status_code=422,
-        content={
-            "ok": False,
-            "error": {
-                "code": "UNSUPPORTED_MODEL",
-                "message": str(exc),
-                "hint": "Use one of the supported models",
-            },
-        },
-    )
 
 
 logger = logging.getLogger("uvicorn")  # your app logger
@@ -55,10 +38,18 @@ def generate_geo_data(query: str = Query(...), model_name: str = Query(...)):
         model_name,
     )
     client = GeoLLMClient(model_name)
-    result = client.generate_data(
-        query=query,
-        geo_data_type=GeoDataType.INTERACTIVE_POINT,
-    )
+    try:
+        result = client.generate_data(
+            query=query,
+            geo_data_type=GeoDataType.INTERACTIVE_POINT,
+        )
+    except Exception as exc:
+        # Unknown model name, Ollama not running, bad API key: all arrive
+        # here from an external service, so report them as an upstream
+        # failure instead of a bare 500 with a stack trace.
+        logger.exception("LLM call failed for model %s", model_name)
+        detail = f"LLM call failed: {exc}"
+        raise HTTPException(status_code=502, detail=detail) from exc
     result = get_geo_coordinates(result)
     envelope = ApiEnvelope(
         meta=Meta(

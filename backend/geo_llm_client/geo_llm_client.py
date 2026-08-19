@@ -4,7 +4,6 @@ from langchain.chat_models import init_chat_model
 from langchain_ollama import ChatOllama
 from pydantic import BaseModel
 
-from .exceptions import UnsupportedModelError
 from .models import InteractivePointSchema
 
 
@@ -27,30 +26,24 @@ class GeoLLMClient:
         GeoDataType.INTERACTIVE_POINT: InteractivePointSchema,
     }
 
+    CLOUD_MODELS = [
+        "gpt-4.1",
+        "gpt-4o-mini",
+        "gpt-4o",
+        "gpt-3.5-turbo",
+    ]
+
     def __init__(self, model_name: str):
         """
         Unified LLM client wrapper.
-        Uses OpenAI or Anthropic models via init_chat_model(),
-        and Ollama models locally via ChatOllama.
+        Cloud models go through init_chat_model(); anything else is
+        treated as an Ollama tag (e.g. "qwen3:8b"). Ollama owns the list
+        of locally installed models, so we do not duplicate it here.
         """
-        supported_models = [
-            "gpt-4.1",
-            "gpt-4o-mini",
-            "gpt-4o",
-            "gpt-3.5-turbo",
-        ]
-        supported_ollama_models = ["qwen3", "gemma"]
-        # Cloud / remote models
-        if model_name in supported_models:
+        if model_name in self.CLOUD_MODELS:
             self.llm_model = init_chat_model(model=model_name)
-        elif model_name in supported_ollama_models:
-            self.llm_model = ChatOllama(model=model_name)
         else:
-            raise UnsupportedModelError(
-                f"This model is not yet implemented. "
-                f"Supported commercial models : {supported_models} "
-                f"Supported Ollama models {supported_ollama_models}"
-            )
+            self.llm_model = ChatOllama(model=model_name)
 
     # ---- Helpers you (or subclasses) can override if needed ----
     def prompt_for(self, dtype: GeoDataType, query: str) -> str:
